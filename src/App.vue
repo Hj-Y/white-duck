@@ -87,6 +87,8 @@
         </div>
       </div>
     </div>
+    <router-link to="/index"></router-link>
+    <router-view></router-view>
     <div class="footer">
       <div class="section">
         <div class="foot-nav">
