@@ -7,9 +7,11 @@ Vue.use(VueRouter)
 Vue.config.productionTip = false;
 //导入组件
 import index from "./components/index.vue"
+import shoppingcar from "./components/shoppingcar.vue"
 let routes= [
   {path:'/index',component:index},
   {path:'/',component:index},
+  {path:'/shoppingcar',component:shoppingcar},
   
 ];
 let router=new VueRouter({
