@@ -166,7 +166,7 @@
                                 </div>
                                 <div class="txt-box">
                                     <a href="/goods/show-98.html">{{item.title}}</a>
-                                    <span>{{item.add_time}}</span>
+                                    <span>{{item.add_time | formatTime}}</span>
                                 </div>
                             </li>
                           
@@ -560,6 +560,7 @@
 
 <script>
 import axios from 'axios'
+import moment from 'moment'
 export default {
     name:'index',
     
@@ -579,6 +580,12 @@ export default {
             this.toplist=res.data.message.toplist
         })
     },
+    filters:{
+        formatTime(value){
+            return moment(value).format('YYYY-MM-DD')
+        }
+    }
+    
 
 }
 </script>
