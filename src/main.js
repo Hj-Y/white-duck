@@ -1,5 +1,9 @@
 import Vue from 'vue'
 import App from './App.vue'
+//饿了么
+import ElementUI from 'element-ui';//模块
+import 'element-ui/lib/theme-chalk/index.css';//样式
+Vue.use(ElementUI);//插件使用
 import './assets/statics/site/css/style.css'
 import VueRouter from 'vue-router'
 Vue.use(VueRouter)

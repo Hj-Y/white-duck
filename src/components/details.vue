@@ -40,35 +40,13 @@
                     <dt>购买数量</dt>
                     <dd>
                       <div class="stock-box">
-                        <div class="el-input-number el-input-number--small">
-                          <span role="button" class="el-input-number__decrease is-disabled">
-                            <i class="el-icon-minus"></i>
-                          </span>
-                          <span role="button" class="el-input-number__increase">
-                            <i class="el-icon-plus"></i>
-                          </span>
-                          <div class="el-input el-input--small">
-                            <!---->
-                            <input
-                              autocomplete="off"
-                              size="small"
-                              type="text"
-                              rows="2"
-                              max="60"
-                              min="1"
-                              validateevent="true"
-                              class="el-input__inner"
-                              role="spinbutton"
-                              aria-valuemax="60"
-                              aria-valuemin="1"
-                              aria-valuenow="1"
-                              aria-disabled="false"
-                            >
-                            <!---->
-                            <!---->
-                            <!---->
-                          </div>
-                        </div>
+                        <el-input-number
+                          v-model="inputnum"
+                          @change="变了哦"
+                          :min="1"
+                          :max="10"
+                          label="描述文字"
+                        ></el-input-number>
                       </div>
                       <span class="stock-txt">
                         库存
@@ -95,10 +73,10 @@
               >
                 <ul>
                   <li>
-                    <a href="javascript:;" @click="index=1" :class="{selected:index==1}" >商品介绍</a>
+                    <a href="javascript:;" @click="index=1" :class="{selected:index==1}">商品介绍</a>
                   </li>
                   <li>
-                    <a href="javascript:;" @click="index=2" :class="{selected:index==2}" >商品评论</a>
+                    <a href="javascript:;" @click="index=2" :class="{selected:index==2}">商品评论</a>
                   </li>
                 </ul>
               </div>
@@ -180,19 +158,13 @@
                   <li v-for="item in hotgoodslist">
                     <div class="img-box">
                       <!-- <a href="#/site/goodsinfo/90" class> -->
-                      <router-link to="'/details/'+item.id">
-                      
-                        <img
-                          :src="item.img_url"
-                        >
+                      <router-link :to="'/details/'+item.id">
+                        <img :src="item.img_url">
                       </router-link>
                       <!-- </a> -->
                     </div>
                     <div class="txt-box">
-                      <router-link to="'/details/'+item.id">
-                      
-                      {{item.title}}
-                      </router-link>
+                      <router-link :to="'/details/'+item.id">{{item.title}}</router-link>
 
                       <span>{{item.add_time | formatTime-g }}</span>
                     </div>
@@ -286,7 +258,7 @@
                       <a href="#/site/goodsinfo/103" class>骆驼男装2017秋季新款运动休闲纯色夹克青年宽松长袖针织开衫卫衣</a>
                       <span>2017-09-26</span>
                     </div>
-                  </li> -->
+                  </li>-->
                 </ul>
               </div>
             </div>
@@ -298,32 +270,47 @@
 </template>
 
 <script>
-
-import moment from 'moment'
+import moment from "moment";
 export default {
-    name:'details',
-    data() {
-        return {
-            goodsinfo:{},
-            hotgoodslist:[],
-            index:1,
-        }
-    },
-    //获取数据
-    created() {
+  name: "details",
+  data() {
+    return {
+      goodsinfo: {},
+      hotgoodslist: [],
+      index: 1,
+      inputnum:1
+    };
+  },
+  //获取数据
+  methods: {
+    getDetails() {
       //主体商品
-        this.$axios.get(`site/goods/getgoodsinfo/${this.$route.params.id}`).then(res=>{
-            // console.log(res);           
-            this.goodsinfo=res.data.message.goodsinfo;
-            this.hotgoodslist=res.data.message.hotgoodslist;
+      this.$axios
+        .get(`site/goods/getgoodsinfo/${this.$route.params.id}`)
+        .then(res => {
+          // console.log(res);
+          this.goodsinfo = res.data.message.goodsinfo;
+          this.hotgoodslist = res.data.message.hotgoodslist;
         });
-        //评论区域
-        this.$axios.get(`site/comment/getbypage/goods/102?pageIndex=1&pageSize=1`).then(res=>{
+      //评论区域
+      this.$axios
+        .get(`site/comment/getbypage/goods/102?pageIndex=1&pageSize=1`)
+        .then(res => {
           console.log(res);
-          
-        })
-    },
-    
+        });
+    }
+  },
+  created() {
+    this.getDetails();
+  },
+  //使用侦听器重新获取数据  观察数据的改变
+  watch: {
+    //观察数据的改变
+    $route(value, oldValue) {
+      //接口的调用
+      this.getDetails();
+    }
+  }
 };
 </script>
 
