@@ -166,7 +166,7 @@
                                 </div>
                                 <div class="txt-box">
                                     <a href="/goods/show-98.html">{{item.title}}</a>
-                                    <span>{{item.add_time | formatTime}}</span>
+                                    <span>{{item.add_time | formatTime-g("YYYY-MM-DD")}}</span>
                                 </div>
                             </li>
                           
@@ -221,7 +221,7 @@
 
 <script>
 
-import moment from 'moment'
+
 export default {
     name:'index',
     
@@ -250,11 +250,7 @@ export default {
             
         })
     },
-    filters:{
-        formatTime(value){
-            return moment(value).format('YYYY-MM-DD')
-        }
-    }
+    
     
 
 }

@@ -194,7 +194,7 @@
                       {{item.title}}
                       </router-link>
 
-                      <span>{{item.add_time | formatTime }}</span>
+                      <span>{{item.add_time | formatTime-g }}</span>
                     </div>
                   </li>
                   <!-- <li>
@@ -323,11 +323,7 @@ export default {
           
         })
     },
-    filters:{
-        formatTime(value){
-            return moment(value).format('MM-DD-YYYY')
-        }
-    }
+    
 };
 </script>
 
