@@ -17,7 +17,7 @@
                 <el-carousel>
                   <el-carousel-item v-for="(item,index) in imglist" :key="index">
                     <!-- <h3>{{ item }}</h3> -->
-                    <img :src="item.thumb_path" alt="">
+                    <img :src="item.thumb_path" alt>
                   </el-carousel-item>
                 </el-carousel>
               </div>
@@ -123,37 +123,29 @@
                     <p
                       style="margin: 5px 0px 15px 69px; line-height: 42px; text-align: center; border: 1px solid rgb(247, 247, 247);"
                     >暂无评论，快来抢沙发吧！</p>
-                    <li>
+                    <li v-for="item in commentlist">
                       <div class="avatar-box">
                         <i class="iconfont icon-user-full"></i>
                       </div>
                       <div class="inner-box">
                         <div class="info">
-                          <span>匿名用户</span>
-                          <span>2017/10/23 14:58:59</span>
+                          <span>{{item.user_name}}</span>
+                          <span>{{item.add_time | formatTime-g}}</span>
                         </div>
-                        <p>testtesttest</p>
-                      </div>
-                    </li>
-                    <li>
-                      <div class="avatar-box">
-                        <i class="iconfont icon-user-full"></i>
-                      </div>
-                      <div class="inner-box">
-                        <div class="info">
-                          <span>匿名用户</span>
-                          <span>2017/10/23 14:59:36</span>
-                        </div>
-                        <p>很清晰调动单很清晰调动单</p>
+                        <p>{{item.content}}</p>
                       </div>
                     </li>
                   </ul>
                   <div class="page-box" style="margin: 5px 0px 0px 62px;">
-                    <div id="pagination" class="digg">
-                      <span class="disabled">« 上一页</span>
-                      <span class="current">1</span>
-                      <span class="disabled">下一页 »</span>
-                    </div>
+                    <el-pagination
+                      @size-change="handleSizeChange"
+                      @current-change="handleCurrentChange"
+                      :current-page="pageIndex"
+                      :page-sizes="[5, 10, 15, 20]"
+                      :page-size="pageSize"
+                      layout="total, sizes, prev, pager, next, jumper"
+                      :total="totalcount"
+                    ></el-pagination>
                   </div>
                 </div>
               </div>
@@ -288,7 +280,11 @@ export default {
       hotgoodslist: [],
       index: 1,
       inputnum: 1,
-      comment:'',
+      comment: "",
+      pageIndex: 1,
+      pageSize: 10,
+      totalcount: "",
+      commentlist: []
     };
   },
   //获取数据
@@ -303,27 +299,49 @@ export default {
           this.hotgoodslist = res.data.message.hotgoodslist;
           this.imglist = res.data.message.imglist;
         });
-      
     },
-    postComment(){
-      if(this.comment===''){
-        this.$message.error('弟弟,写点东西呗')
-      }else{
-        this.$axios.post(`site/validate/comment/post/goods/${this.$route.params.id}`,{commenttxt:this.comment}
-      
-      ).then(res=>{
-        if(res.data.status===0){
-          this.$message.success(res.data.message);
-          // 本地清空
-          this.comment='';
-        }
-
-      })
+    postComment() {
+      if (this.comment === "") {
+        this.$message.error("弟弟,写点东西呗");
+      } else {
+        this.$axios
+          .post(`site/validate/comment/post/goods/${this.$route.params.id}`, {
+            commenttxt: this.comment
+          })
+          .then(res => {
+            if (res.data.status === 0) {
+              this.$message.success(res.data.message);
+              // 本地清空
+              this.comment = "";
+            }
+          });
       }
+    },
+    getComments() {
+      this.$axios
+        .get(
+          `site/comment/getbypage/goods/${this.$route.params.id}?pageIndex=${
+            this.pageIndex
+          }&pageSize=${this.pageSize}`
+        )
+        .then(res => {
+          // console.log(res);
+          this.commentlist = res.data.message;
+          this.totalcount = res.data.totalcount;
+        });
+    },
+    handleSizeChange(size){
+      this.pageSize=size;
+      this.getComments()
+    },
+    handleCurrentChange(current){
+      this.pageIndex=current;
+      this.getComments()
     }
   },
   created() {
     this.getDetails();
+    this.getComments();
   },
   //使用侦听器重新获取数据  观察数据的改变
   watch: {
@@ -337,20 +355,19 @@ export default {
 </script>
 
 <style>
- .pic-box{
-   width: 395px;
-   height: 320px;
- }
- /* .pic-box .el-carousel{
+.pic-box {
+  width: 395px;
+  height: 320px;
+}
+/* .pic-box .el-carousel{
 
  }
  .pic-box .el-carousel__container{
 
  } */
- .pic-box .el-carousel__container img{
-   display: block;
-   width: 100%;
-   height: 100%;
-
- }
+.pic-box .el-carousel__container img {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
 </style>
