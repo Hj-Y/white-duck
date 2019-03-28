@@ -13,7 +13,14 @@
         <div class="wrap-box">
           <div class="left-925">
             <div class="goods-box clearfix">
-              <div class="pic-box"></div>
+              <div class="pic-box">
+                <el-carousel>
+                  <el-carousel-item v-for="(item,index) in imglist" :key="index">
+                    <!-- <h3>{{ item }}</h3> -->
+                    <img :src="item.thumb_path" alt="">
+                  </el-carousel-item>
+                </el-carousel>
+              </div>
               <div class="goods-spec">
                 <h1>{{goodsinfo.title}}</h1>
                 <p class="subtitle">{{goodsinfo.sub_title}}</p>
@@ -42,9 +49,9 @@
                       <div class="stock-box">
                         <el-input-number
                           v-model="inputnum"
-                          @change="变了哦"
+                          @change="handleChange"
                           :min="1"
-                          :max="10"
+                          :max="9999"
                           label="描述文字"
                         ></el-input-number>
                       </div>
@@ -95,6 +102,7 @@
                           sucmsg=" "
                           data-type="*10-1000"
                           nullmsg="请填写评论内容！"
+                          v-model="comment"
                         ></textarea>
                         <span class="Validform_checktip"></span>
                       </div>
@@ -105,6 +113,7 @@
                           type="submit"
                           value="提交评论"
                           class="submit"
+                          @click="postComment"
                         >
                         <span class="Validform_checktip"></span>
                       </div>
@@ -278,7 +287,8 @@ export default {
       goodsinfo: {},
       hotgoodslist: [],
       index: 1,
-      inputnum:1
+      inputnum: 1,
+      comment:'',
     };
   },
   //获取数据
@@ -291,13 +301,25 @@ export default {
           // console.log(res);
           this.goodsinfo = res.data.message.goodsinfo;
           this.hotgoodslist = res.data.message.hotgoodslist;
+          this.imglist = res.data.message.imglist;
         });
-      //评论区域
-      this.$axios
-        .get(`site/comment/getbypage/goods/102?pageIndex=1&pageSize=1`)
-        .then(res => {
-          console.log(res);
-        });
+      
+    },
+    postComment(){
+      if(this.comment===''){
+        this.$message.error('弟弟,写点东西呗')
+      }else{
+        this.$axios.post(`site/validate/comment/post/goods/${this.$route.params.id}`,{commenttxt:this.comment}
+      
+      ).then(res=>{
+        if(res.data.status===0){
+          this.$message.success(res.data.message);
+          // 本地清空
+          this.comment='';
+        }
+
+      })
+      }
     }
   },
   created() {
@@ -315,4 +337,20 @@ export default {
 </script>
 
 <style>
+ .pic-box{
+   width: 395px;
+   height: 320px;
+ }
+ /* .pic-box .el-carousel{
+
+ }
+ .pic-box .el-carousel__container{
+
+ } */
+ .pic-box .el-carousel__container img{
+   display: block;
+   width: 100%;
+   height: 100%;
+
+ }
 </style>
