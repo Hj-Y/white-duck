@@ -179,14 +179,21 @@
                 <ul class="side-img-list">
                   <li v-for="item in hotgoodslist">
                     <div class="img-box">
-                      <a href="#/site/goodsinfo/90" class>
+                      <!-- <a href="#/site/goodsinfo/90" class> -->
+                      <router-link to="'/details/'+item.id">
+                      
                         <img
                           :src="item.img_url"
                         >
-                      </a>
+                      </router-link>
+                      <!-- </a> -->
                     </div>
                     <div class="txt-box">
-                      <a href="#/site/goodsinfo/90" class>{{item.title}}</a>
+                      <router-link to="'/details/'+item.id">
+                      
+                      {{item.title}}
+                      </router-link>
+
                       <span>{{item.add_time | formatTime }}</span>
                     </div>
                   </li>
@@ -291,7 +298,7 @@
 </template>
 
 <script>
-import axios from 'axios'
+
 import moment from 'moment'
 export default {
     name:'details',
@@ -304,15 +311,21 @@ export default {
     },
     //获取数据
     created() {
-        axios.get(`http://111.230.232.110:8899/site/goods/getgoodsinfo/${this.$route.params.id}`).then(res=>{
+      //主体商品
+        this.$axios.get(`site/goods/getgoodsinfo/${this.$route.params.id}`).then(res=>{
             // console.log(res);           
             this.goodsinfo=res.data.message.goodsinfo;
             this.hotgoodslist=res.data.message.hotgoodslist;
         });
+        //评论区域
+        this.$axios.get(`site/comment/getbypage/goods/102?pageIndex=1&pageSize=1`).then(res=>{
+          console.log(res);
+          
+        })
     },
     filters:{
         formatTime(value){
-            return moment(value).format('YYYY-MM-DD')
+            return moment(value).format('MM-DD-YYYY')
         }
     }
 };
